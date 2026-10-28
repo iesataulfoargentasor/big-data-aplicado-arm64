@@ -1,0 +1,125 @@
+BIG DATA ARM64 PARA MACBOOK AIR M4 — 28/10/2026
+
+ORIGEN
+https://github.com/iesataulfoargentasor/bigdata-stack-mac-m4
+Árbol de origen: 4f3c5b5131caad24979bd8ba0b6710bc5d8a9f3a
+
+ENTORNO
+Pruebas reales en Docker Desktop del Mac del usuario, motor linux/aarch64.
+Docker 29.4.1 y Compose 5.1.3; Docker dispone de 10 CPU y unos 7,75 GiB.
+Se detuvieron los stacks anteriores con autorización del usuario.
+Se utilizó un proyecto independiente bigdata-arm64-check y volúmenes nuevos.
+
+CONSTRUCCIÓN Y ARQUITECTURA
+- Base Hadoop 3.3.6 construida con Ubuntu 22.04 ARM64 y OpenJDK 8 ARM64.
+- Descarga oficial hadoop-3.3.6-aarch64.tar.gz, SHA-512 verificada:
+  b0a485c5ae0d97b08285bb83a3dd78b834153b2bd53f96ac301852862ccaff139f2c547aee808d5ad4afdc3a204b1c3b6ba459ea83ebf2779e9c129f37c69059
+- Imagen oficial Hive 4.0.1 con variante ARM64, índice fijado:
+  sha256:5194161ef50b80875f937dff04936df047cbe894e9727ab8f0606349345b1bd3
+- Construidas las imágenes de NameNode, ResourceManager, DataNode/NodeManager,
+  cliente Hadoop, Hive y laboratorio para la carga de datos retail.
+- Las diez imágenes distintas del perfil lake son arm64 según Docker.
+- Java de NameNode, ResourceManager, DataNode/NodeManager, metastore y HiveServer2
+  declara os.arch=aarch64.
+- file identifica Java y libhadoop.so del nuevo Hadoop como ELF ARM aarch64.
+- hadoop checknative confirma hadoop:true, zlib:true, zstd:true y bzip2:true
+  tanto en la base Hadoop como dentro de HiveServer2.
+- ARQUITECTURAS.json guarda los identificadores de las imágenes probadas.
+
+PRUEBAS FUNCIONALES SUPERADAS
+- Arranque saludable del lago completo: HDFS, YARN, MySQL, MinIO, Hive y Trino.
+- HDFS con DataNode registrado y directorios inicializados.
+- HiveServer2: creación de tabla Parquet en HDFS, INSERT y GROUP BY usando Tez
+  local. Resultados ES=30 y FR=12.
+- Trino: tabla HDFS con 25 filas y tabla MinIO con 5 filas.
+- Trino: acceso a los 20.000 pedidos de MySQL retail.
+- MapReduce real sobre YARN con un mapa y 1.000 muestras:
+  resultado Pi=3.148, trabajo completado correctamente.
+- Cliente Jupyter de Hadoop: API HTTP 200, Python aarch64, lectura HDFS y
+  creación/eliminación de un archivo de prueba como hdadmin en notebooks/.
+- Recreación de contenedores conservando los volúmenes: los servicios vuelven
+  a estar saludables. No se reformatea el NameNode existente.
+- Tras recrear, sin volver a generar las tablas: Hive devuelve ES=30/FR=12,
+  lee las 25 filas HDFS y las 5 filas MinIO creadas por Trino.
+- Tras recrear, Trino ve las 3 filas escritas por Hive y los 20.000 pedidos MySQL.
+- Validación estática de todos los perfiles y Kafka: ARM64 declarado,
+  dependencias completas sin ciclos, rutas existentes y puertos sólo locales.
+- Sintaxis de los asistentes y scripts de comprobación válida.
+
+AVISOS QUE PUEDEN SEGUIR APARECIENDO
+No son avisos de arquitectura AMD64:
+- SLF4J: más de una implementación de logging en las dependencias de Hive.
+- Hadoop: módulos opcionales OpenSSL, ISA-L y PMDK no disponibles. Las pruebas
+  no dependen de ellos; se usan las implementaciones Java cuando procede.
+- Consola Trino sin terminal interactivo durante las pruebas automáticas.
+- La configuración de Hive no incluye log4j.properties de Hadoop.
+
+AMPLIACIÓN: ELT, AIRFLOW Y KAFKA — PRUEBAS REALES EN EL MISMO MAC
+
+Correcciones incorporadas:
+- airflow-init conserva el entrypoint oficial de Apache Airflow. La versión
+  anterior lo reemplazaba por bash y no registraba el UID 501 de macOS;
+  fallaba con "uid not found: 501". Ahora la migración y el inicio funcionan.
+- Kafka UI queda fijada al digest ARM64 probado:
+  sha256:7cda86a33344160309fdb65146332e4da65db81a945614f2fe32e210803f6fd1
+- Se incluyen asistentes reproducibles para comprobar el DAG, contrastar
+  los resultados ELT con MySQL y probar mensajes y réplicas Kafka.
+
+ELT manual:
+- MySQL -> dlt -> DuckDB 1.3.2 -> dbt: ejecución completa correcta.
+- Seis modelos de dbt y once pruebas: PASS=11, WARN=0, ERROR=0.
+- Las seis tablas copiadas coinciden en número de filas con MySQL:
+  departments 6; categories 24; products 303; customers 2000;
+  orders 20000; order_items 59758.
+- Ambos marts coinciden con la suma de ventas de MySQL: 38638693.86.
+- Python del laboratorio: aarch64.
+- Jupyter responde HTTP 200; el usuario puede escribir en workspace/data.
+- DuckDB escribe y lee Parquet en MinIO: diez filas y suma 45. El objeto
+  temporal se retiró tras comprobarlo.
+
+Airflow:
+- Airflow 2.10.5 y el Python de su entorno ELT ejecutan aarch64.
+- DuckDB 1.3.2 coincide en el laboratorio y el entorno de tareas Airflow.
+- DAG disparado mediante Airflow y ejecutado por el scheduler/LocalExecutor:
+  validacion_arm64_1793187456_19203.
+- Estado success del DAG y de las tres tareas:
+  dlt_mysql_a_duckdb, dbt_run y dbt_test.
+- Tras el DAG, filas y totales siguen coincidiendo con MySQL.
+- /health indica scheduler y metadatabase saludables.
+- Recreación de los contenedores conservando volúmenes: el historial del DAG
+  sigue en success y los datos DuckDB siguen correctos.
+
+Kafka:
+- Apache Kafka 4.3.1, tres brokers/controladores KRaft, imágenes ARM64.
+- Java 21.0.11 en Kafka: os.arch=aarch64. Kafka UI también es imagen ARM64.
+- Topic de prueba con una partición, factor de replicación 3 y tres réplicas
+  sincronizadas (ISR). Producción con acks=all y consumo desde otro broker.
+- Se detuvo el líder del topic: el clúster aceptó otro mensaje con acks=all
+  y se recuperaron ambos mensajes completos y ordenados desde otro broker.
+- Al reiniciar el broker se recuperaron tres réplicas sincronizadas.
+- Tras recrear todos los contenedores manteniendo los volúmenes, ambos
+  mensajes siguen disponibles y ordenados.
+- Desde macOS responden correctamente al protocolo Kafka ApiVersions los
+  puertos 29092, 39092 y 49092.
+- Consola web /actuator/health: UP; /api/clusters: ONLINE, brokerCount=3.
+- El asistente final comprobar-kafka.sh también pasó tras la recreación.
+
+La validación conjunta incluye 14 imágenes distintas ARM64. El inventario
+exacto se guarda en ARQUITECTURAS.json. No es una certificación para cualquier
+carga, todas las extensiones posibles ni operación de producción.
+
+ALCANCE Y LIMITACIONES
+Esta revisión valida lake, el cliente Hadoop, MapReduce/YARN, el flujo ELT
+manual, el DAG real de Airflow y el clúster Kafka con su consola.
+Los escenarios se ejecutaron por separado, no todos simultáneamente.
+Los ejercicios son pequeños; no se garantiza capacidad para datos grandes,
+trabajos simultáneos ni otros conectores o algoritmos nativos no probados.
+Hive mantiene Tez local dentro de HiveServer2; no se presenta como Hive sobre YARN.
+La versión y suma de Hadoop y el digest de Hive están fijados. Los paquetes
+APT y algunas dependencias Python transitivas pueden cambiar en futuras construcciones.
+El nuevo proyecto no reutiliza ni migra automáticamente los datos anteriores.
+
+FUENTES
+https://downloads.apache.org/hadoop/core/hadoop-3.3.6/
+https://archive.apache.org/dist/hadoop/common/hadoop-3.3.6/hadoop-3.3.6-aarch64.tar.gz.sha512
+https://hub.docker.com/r/apache/hive

@@ -1,0 +1,162 @@
+{
+  "date": "2026-10-28",
+  "validated_scenarios": [
+    "lake",
+    "hadoop-client",
+    "yarn-mapreduce",
+    "elt-manual",
+    "airflow-dag",
+    "kafka"
+  ],
+  "scope": "Pr\u00e1cticas peque\u00f1as, escenarios ejecutados por separado; no prueba de carga de todos los servicios simult\u00e1neos.",
+  "images": [
+    {
+      "image": "apache/kafka:4.3.1",
+      "services": [
+        "kafka-1",
+        "kafka-2",
+        "kafka-3"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "image_id": "sha256:77e3df9054047a88b520d0cc46e16696d3b22022e1d580aeccd2632df6532837",
+      "runtime_tested": true
+    },
+    {
+      "image": "bigdata-arm64-airflow:1.0",
+      "services": [
+        "airflow-init",
+        "airflow-scheduler",
+        "airflow-webserver"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "image_id": "sha256:1b0fec48d844b9923fe37919f19b189036f24a09f7cbf53216b73d443bc5ac7e",
+      "runtime_tested": true
+    },
+    {
+      "image": "bigdata-arm64-hadoop-client:3.3.6",
+      "services": [
+        "client",
+        "hdfs-init"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "image_id": "sha256:7770861e4a92534d3628f1b5be7e15d110bfeb08ddee13f7f6c793583143046b",
+      "runtime_tested": true
+    },
+    {
+      "image": "bigdata-arm64-hadoop-datanode:3.3.6",
+      "services": [
+        "dnnm"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "image_id": "sha256:6040e235a387c4624909dc47e81a0bb3bc470fe3b369288a957c1b223e45c82c",
+      "runtime_tested": true
+    },
+    {
+      "image": "bigdata-arm64-hadoop-namenode:3.3.6",
+      "services": [
+        "namenode"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "image_id": "sha256:585e658cb186eb5f09ebafbcce036f9c1d04fe5b60518f926684a6cbbcd4b94c",
+      "runtime_tested": true
+    },
+    {
+      "image": "bigdata-arm64-hadoop-resourcemanager:3.3.6",
+      "services": [
+        "resourcemanager"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "image_id": "sha256:47efb212943ba07c8efd19c5d35a4fede9e8232666df3cc31d52529b89095cab",
+      "runtime_tested": true
+    },
+    {
+      "image": "bigdata-arm64-hive:4.0.1",
+      "services": [
+        "hive-metastore",
+        "hiveserver2"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "image_id": "sha256:7cc3e98b2198d66659e6443fafff0aa350bcbdb2231ecf96aef85ef296a8fafc",
+      "runtime_tested": true
+    },
+    {
+      "image": "bigdata-arm64-lab:1.0",
+      "services": [
+        "lab",
+        "retail-init"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "image_id": "sha256:f8102364eca64a79ae5f4e1bdefe08e7d997663392a99c6968fff2b12046fbe3",
+      "runtime_tested": true
+    },
+    {
+      "image": "bitnamilegacy/minio-client:2025.4.16",
+      "services": [
+        "minio-init"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "image_id": "sha256:8a86e441decf053093c5977d49290298295f850c7843652f93e970ab15871dd1",
+      "runtime_tested": true
+    },
+    {
+      "image": "bitnamilegacy/minio:2025.4.22",
+      "services": [
+        "minio"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "image_id": "sha256:50cec18ac4184af4671a78aedd5554942c8ae105d51a465fa82037949046da01",
+      "runtime_tested": true
+    },
+    {
+      "image": "kafbat/kafka-ui:latest@sha256:7cda86a33344160309fdb65146332e4da65db81a945614f2fe32e210803f6fd1",
+      "services": [
+        "kafka-ui"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "image_id": "sha256:7cda86a33344160309fdb65146332e4da65db81a945614f2fe32e210803f6fd1",
+      "runtime_tested": true
+    },
+    {
+      "image": "mysql:8.4",
+      "services": [
+        "mysql-metastore",
+        "mysql-retail"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "image_id": "sha256:a0225d1ea6631c8bc2385dc4c2faba17bbf1834ecf369e1659a9a382bd8d5dd7",
+      "runtime_tested": true
+    },
+    {
+      "image": "postgres:16.8-bookworm",
+      "services": [
+        "postgres-airflow"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "image_id": "sha256:301bcb60b8a3ee4ab7e147932723e3abd1cef53516ce5210b39fd9fe5e3602ae",
+      "runtime_tested": true
+    },
+    {
+      "image": "trinodb/trino:476",
+      "services": [
+        "trino"
+      ],
+      "os": "linux",
+      "architecture": "arm64",
+      "image_id": "sha256:00125e40d063bc4816d165482f6044872b18b56026fb959d3b28ce1f96ffbbee",
+      "runtime_tested": true
+    }
+  ]
+}

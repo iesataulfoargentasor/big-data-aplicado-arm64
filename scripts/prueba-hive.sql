@@ -1,0 +1,6 @@
+CREATE DATABASE IF NOT EXISTS prueba_arm64;
+CREATE TABLE IF NOT EXISTS prueba_arm64.ventas (pais STRING, importe INT)
+STORED AS PARQUET;
+INSERT OVERWRITE TABLE prueba_arm64.ventas
+SELECT 'ES', 10 UNION ALL SELECT 'ES', 20 UNION ALL SELECT 'FR', 12;
+SELECT pais, SUM(importe) AS total FROM prueba_arm64.ventas GROUP BY pais ORDER BY pais;
