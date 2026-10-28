@@ -69,18 +69,43 @@ Ejemplo de consola Hive:
 docker compose exec hiveserver2 beeline -u jdbc:hive2://localhost:10000/default -n hdadmin
 ```
 
-## Cliente Hadoop con Jupyter
+## Jupyter incluido en el lago
 
-El perfil lake usa el cliente para inicialización y pruebas, pero no arranca su cuaderno permanentemente.
-Para trabajar con el cliente y mantener el lago:
+`lake` inicia ahora Jupyter con clientes **PyHive, Trino y boto3 (MinIO/S3)** ya instalados. Abre **http://localhost:8889**, entra en `lake/` y ejecuta los cuadernos **00 → 04**. No necesitas Beeline ni instalar paquetes durante la práctica.
+
+| Cuaderno | Qué hace |
+|---|---|
+| 00_Empezar | Comprueba ARM64 y las conexiones; explica dónde se ejecuta cada comando |
+| 01_HDFS | Crea CSV y JSON Lines, los sube a HDFS y comprueba su contenido |
+| 02_Hive_y_Trino | Registra tablas externas y consulta los mismos datos con ambos motores |
+| 03_MinIO_y_Parquet | Sube objetos con boto3; consulta MinIO; transforma HDFS a Parquet en MinIO |
+| 04_MapReduce_Python | Envía mapper/reducer Python a YARN mediante Hadoop Streaming |
+
+En `notebooks/lake/configuracion.py` elige un identificador ALUMNO antes de empezar. Si lo cambias, reinicia los kernels abiertos. Los ejemplos usan rutas y bases propias, sin modificar `aula.ventas`. Las celdas de carga reescriben los archivos de ejemplo de ese identificador; las transformaciones y MapReduce crean resultados nuevos por ejecución.
+
+En Jupyter: Python o `!hdfs ...`. En Terminal de macOS: `docker compose ...`. En los helpers SQL: una sentencia por llamada. Los resultados aparecen como tablas dentro del cuaderno. `hive_sql` conecta con HiveServer2; `trino_sql` conecta con Trino. No uses `localhost` para conectar desde el contenedor a otros servicios: utiliza sus nombres internos.
+
+### Actualizar una instalación existente
+
+Guarda tus cuadernos. Desde Terminal de macOS, en la carpeta clonada del repositorio:
 
 ```bash
-bash preparar.sh hadoop
-docker compose --profile lake --profile hadoop up -d --no-build --pull never --wait --wait-timeout 900
+git pull --ff-only
+bash preparar.sh lake
+bash iniciar.sh lake
 ```
 
-Abre http://localhost:8889. La carpeta notebooks/ se comparte con el cliente.
-preparar.sh usa tu UID de macOS al construir Hadoop para facilitar la escritura en esa carpeta.
+Si Git indica cambios locales incompatibles, consérvalos antes de actualizar; no uses `reset --hard`. Si utilizas un ZIP, descarga la versión nueva y conserva tu carpeta de trabajo; no ejecutes dos copias del mismo proyecto simultáneamente. No uses `down -v`: no es necesario borrar volúmenes para actualizar.
+
+El cliente se reconstruye con las dependencias y se recrea al iniciar. `notebooks/` se comparte con el Mac. `preparar.sh` usa tu UID para permitir guardar archivos. El acceso sin token se limita a 127.0.0.1; es un laboratorio local, no un servidor público.
+
+### Comprobar todos los cuadernos automáticamente
+
+```bash
+docker compose exec -u hdadmin client /opt/jupyter_env/bin/python /opt/bd/validar-cuadernos.py
+```
+
+La comprobación ejecuta copias temporales con un identificador único. Conserva sus datos de prueba y no cambia los cuadernos originales. Puede tardar varios minutos. No ejecutes prácticas pesadas en paralelo.
 
 ## ELT y Airflow: validados en ARM64
 

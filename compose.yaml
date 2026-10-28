@@ -141,7 +141,7 @@ services:
       start_period: 90s
 
   client:
-    profiles: ["hadoop", "all"]
+    profiles: ["hadoop", "lake", "all"]
     image: bigdata-arm64-hadoop-client:3.3.6
     build: ./Client
     platform: linux/arm64
@@ -162,6 +162,13 @@ services:
       - "127.0.0.1:8889:8889"
     volumes:
       - ./notebooks:/media/notebooks
+      - ./scripts/validar-cuadernos.py:/opt/bd/validar-cuadernos.py:ro
+    healthcheck:
+      test: ["CMD", "/opt/jupyter_env/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8889/api/status', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
     networks:
       - hadoop-net
 

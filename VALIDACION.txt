@@ -123,3 +123,27 @@ FUENTES
 https://downloads.apache.org/hadoop/core/hadoop-3.3.6/
 https://archive.apache.org/dist/hadoop/common/hadoop-3.3.6/hadoop-3.3.6-aarch64.tar.gz.sha512
 https://hub.docker.com/r/apache/hive
+
+Ampliación: Jupyter integrado en lake (28/10/2026)
+------------------------------------------------
+Cliente construido para linux/arm64 y ejecutado como hdadmin.
+PyHive 0.7.0 (pure-sasl), trino 0.336.0, boto3 1.40.61, pandas 2.3.3.
+Notebook 7.6.3; nbclient 0.10.2.
+Los cinco cuadernos se ejecutaron completos mediante nbclient sobre el lago
+activo del MacBook Air M4, usando el identificador validacion_d23c41ad:
+  OK 00_Empezar.ipynb: aarch64 y conexión a HDFS, Hive, Trino y MinIO.
+  OK 01_HDFS.ipynb: CSV y JSON Lines, tres registros subidos a HDFS.
+  OK 02_Hive_y_Trino.ipynb: Hive y Trino leen ambos formatos;
+     Santander=150 y Torrelavega=200, coincidencia entre motores.
+  OK 03_MinIO_y_Parquet.ipynb: boto3 sube CSV a MinIO; Hive/Trino cuentan
+     tres filas; Trino transforma HDFS a Parquet en MinIO; Hive lo lee.
+  OK 04_MapReduce_Python.ipynb: Hadoop Streaming sobre YARN con mapper y
+     reducer Python; hadoop=2, hive=2, trino=1.
+No se detuvieron los servicios originales ni se alteró aula.ventas.
+Los datos de validación permanecen separados bajo su identificador.
+Validación Compose: lake incluye 13 servicios (incluidos inicializadores);
+los demás perfiles y Kafka conservan sus dependencias y puertos válidos.
+Repetición con imagen final y entorno predeterminado: validacion_dd2efc29.
+Los cinco cuadernos volvieron a completarse correctamente.
+Jupyter también se abrió en el navegador y se ejecutó 00_Empezar con
+Run All Cells: arquitectura aarch64, Hive=1, Trino=1 y buckets disponibles.

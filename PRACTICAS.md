@@ -2,7 +2,21 @@
 
 Completa primero la preparación del README. Usa un escenario cada vez y cierra las conexiones a DuckDB antes de lanzar el DAG.
 
-## Recorrido 1: consultar el lago (`lake`)
+## Recorrido 1: el lago desde Jupyter (`lake`)
+
+```bash
+bash preparar.sh lake
+bash iniciar.sh lake
+```
+
+Abre http://localhost:8889, entra en `lake/` y sigue los cuadernos 00 a 04. Configura tu identificador en `configuracion.py`. Esta es la ruta recomendada: HDFS → Hive/Trino → MinIO/Parquet → MapReduce Python, sin salir del navegador.
+
+Consulta [las instrucciones de actualización y validación](README.md#jupyter-incluido-en-el-lago).
+
+### Alternativa: clientes de terminal
+
+Los comandos `docker compose` siguientes se ejecutan en **Terminal de macOS**, dentro de la carpeta del proyecto. Los bloques SQL se ejecutan solo en el cliente indicado. Abre otra pestaña de Terminal para cambiar de cliente; nunca escribas `docker compose` dentro de Beeline.
+
 
 ```bash
 docker compose --profile lake up -d --no-build --wait --wait-timeout 900
@@ -42,13 +56,7 @@ SELECT count(*) FROM demo.nation;     -- 25 (lee de HDFS)
 SELECT count(*) FROM minio.region;    -- 5  (lee de MinIO)
 ```
 
-YARN sigue disponible para MapReduce clásico. Las prácticas de `notebooks/` se lanzan desde el
-Jupyter del `client` (http://localhost:8889), igual que en el clúster mínimo; el `client` arranca
-con el profile `hadoop` o `all`:
-
-```bash
-docker compose --profile hadoop up -d
-```
+YARN sigue disponible para MapReduce clásico. El cliente Jupyter (http://localhost:8889) arranca con `lake`, `hadoop` o `all`. El cuaderno 04 envía scripts Python a YARN mediante Hadoop Streaming.
 
 ---
 

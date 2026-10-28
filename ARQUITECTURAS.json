@@ -6,9 +6,10 @@
     "yarn-mapreduce",
     "elt-manual",
     "airflow-dag",
-    "kafka"
+    "kafka",
+    "jupyter-lake-notebooks"
   ],
-  "scope": "Pr\u00e1cticas peque\u00f1as, escenarios ejecutados por separado; no prueba de carga de todos los servicios simult\u00e1neos.",
+  "scope": "Prácticas pequeñas, escenarios ejecutados por separado; no prueba de carga de todos los servicios simultáneos.",
   "images": [
     {
       "image": "apache/kafka:4.3.1",
@@ -158,5 +159,13 @@
       "image_id": "sha256:00125e40d063bc4816d165482f6044872b18b56026fb959d3b28ce1f96ffbbee",
       "runtime_tested": true
     }
-  ]
+  ],
+  "jupyter_lake_update": {
+    "date": "2026-10-28",
+    "test_image": "bigdata-arm64-hadoop-client:jupyter-lake",
+    "compose_image": "bigdata-arm64-hadoop-client:3.3.6",
+    "image_id": "sha256:35e689dd8c67fe6f855e282766536e0bad197c53d41cc92efde546a2e60f9f35",
+    "architecture": "arm64",
+    "notes": "Imagen Client ampliada; etiqueta de prueba separada para conservar el cliente activo del usuario. preparar.sh lake reconstruye la etiqueta Compose. El inventario images anterior corresponde a la validación inicial."
+  }
 }

@@ -1,0 +1,6 @@
+notebook==7.6.3
+PyHive[hive_pure_sasl]==0.7.0
+trino==0.336.0
+boto3==1.40.61
+pandas==2.3.3
+nbclient==0.10.2

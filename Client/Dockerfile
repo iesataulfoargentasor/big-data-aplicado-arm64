@@ -10,6 +10,7 @@ ENV HADOOP_HOME=${BASE_DIR}/hadoop
 ENV HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64
 ENV HOME=${BASE_DIR}
+ENV IPYTHONDIR=${BASE_DIR}/.local/ipython
 ENV PATH=${PATH}:${JAVA_HOME}/bin:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin
 
 RUN apt-get update && \
@@ -17,11 +18,13 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+COPY requirements.txt /tmp/jupyter-requirements.txt
+
 # El proceso de Jupyter corre como hdadmin. La configuración tiene que estar
 # en su home (/opt/bd), no en /root.
 RUN python3 -m venv /opt/jupyter_env && \
     /opt/jupyter_env/bin/pip install --upgrade pip && \
-    /opt/jupyter_env/bin/pip install 'notebook>=7.2,<8' && \
+    /opt/jupyter_env/bin/pip install -r /tmp/jupyter-requirements.txt && \
     mkdir -p ${HOME}/.jupyter ${HOME}/.local /media/notebooks && \
     printf "%s\n" \
       "c.ServerApp.token = ''" \
